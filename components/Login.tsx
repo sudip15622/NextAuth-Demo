@@ -20,9 +20,11 @@ type FormParamsType = {
     setStatus: React.Dispatch<React.SetStateAction<StatusType>>;
 }
 
-
+// Form component for the login page.
 const LoginForm = ({ status, setStatus }: FormParamsType) => {
 
+
+    // Setting up the react hook form 
     const { register, handleSubmit, formState: { errors }, setError } = useForm<LoginFormData>({
         resolver: zodResolver(LoginDataSchema),
         mode: "onChange",
@@ -33,16 +35,19 @@ const LoginForm = ({ status, setStatus }: FormParamsType) => {
         }
     });
 
+    // Function for handleing form submit
     const onSubmit = async (data: LoginFormData) => {
 
         try {
+            // Calling server action for login via credentials
             const result = await handleCredentialsLogin(data);
 
             if (result.success) {
-                // console.log(result);
                 setStatus("success");
                 return;
             }
+
+            // Showing error in the client side with proper mapping of the form fields.
             if (result.errors) {
                 const errors = result.errors;
                 const fieldErrorMapping: Record<string, LoginValidFieldNames> = {
@@ -101,6 +106,7 @@ const Login = () => {
     const error = searchParams.get("error");
 
     useEffect(() => {
+        // Handling OAuth error can be occured while signin up via social providers or credentials provider.
         if (error) {
 
             const errorMessages: Record<string, string> = {
@@ -122,6 +128,7 @@ const Login = () => {
     }, [error])
 
 
+    // Redirecting the user on successful login.
     useEffect(() => {
         if (status === "success") {
             setTimeout(() => {
@@ -138,6 +145,7 @@ const Login = () => {
         }
     }
 
+    // Calling server action for social login.
     const handleSocialClick = async (provider: "google" | "github") => {
         try {
             await handleProviderLogin(provider, callbackUrl);

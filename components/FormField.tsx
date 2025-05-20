@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { FormFieldProps } from '@/types/types'
 import { BiHide, BiShow } from "react-icons/bi";
 
+//Reusable form input field componenet
 export const FormField = <T extends object>({ type, name, placeholder, register, error }: FormFieldProps<T>) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [showIcon, setShowIcon] = useState(false);
@@ -11,6 +12,7 @@ export const FormField = <T extends object>({ type, name, placeholder, register,
     const iconRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+        // Function to be executed while click outside the input field
         const handleClickOutside = (event: MouseEvent) => {
             if (iconRef.current && !iconRef.current.contains(event.target as Node | null)) {
                 passwordRef.current?.value === "" && setShowIcon(false);
@@ -24,7 +26,7 @@ export const FormField = <T extends object>({ type, name, placeholder, register,
         }
     }, [iconRef])
 
-    const { ref, ...rest } = register(name);
+    const { ref, ...rest } = register(name); // should use the refcallback of react hook form
 
     const isPasswordField = name === "password" || name === "confirmPassword";
 
@@ -41,10 +43,11 @@ export const FormField = <T extends object>({ type, name, placeholder, register,
                     type={type !== "password" ? type : isPasswordVisible ? "text" : "password"}
                     placeholder={placeholder}
                     onFocus={handleFocus}
-                    ref={(e) => { passwordRef.current = e; ref(e); }}
+                    ref={(e) => { passwordRef.current = e; ref(e); }}// ref callback of react hook form
                     {...rest}
                 />
 
+                {/* Hide or Show icon for the password field */}
                 {isPasswordField && showIcon && (
                     <span
                         onClick={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -55,6 +58,7 @@ export const FormField = <T extends object>({ type, name, placeholder, register,
                 )}
             </div>
 
+            {/* Error message to show below the form input */}
             {error && (
                 <div className="text-[.9rem] text-red-500">
                     {error.message}

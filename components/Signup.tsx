@@ -21,8 +21,10 @@ type FormParamsType = {
     setStatus: React.Dispatch<React.SetStateAction<StatusType>>;
 }
 
-
+// Form component for the signup page.
 const SignupForm = ({ status, setStatus }: FormParamsType) => {
+
+    // Setting up the react hook form.
     const { register, handleSubmit, formState: { errors }, setError } = useForm<SignupFormData>({
         resolver: zodResolver(SignupDataSchema),
         mode: "onChange",
@@ -39,11 +41,10 @@ const SignupForm = ({ status, setStatus }: FormParamsType) => {
         console.log(errors)
     }, [errors])
 
+    // Submit function of data submit
     const onSubmit = async (data: SignupFormData) => {
         try {
-
-            console.log(data);
-
+            // Calling the server action for registering user.
             const result = await handleSignup(data);
 
             if (result.success) {
@@ -51,6 +52,7 @@ const SignupForm = ({ status, setStatus }: FormParamsType) => {
                 setStatus("success");
                 return;
             }
+            // Handling the server side error with proper field mapping.
             if (result.errors) {
                 const errors = result.errors;
                 // console.log(errors);
@@ -124,6 +126,7 @@ const Signup = () => {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/login";
 
+    // Redirecting the user on successful signup
     useEffect(() => {
         if (status === "success") {
             setTimeout(() => {
@@ -137,6 +140,8 @@ const Signup = () => {
             setStatus("nothing");
         }
     }
+
+    // Calling server action for social signup as same as in the login page.
     const handleSocialClick = async (provider: "google" | "github") => {
         try {
             await handleProviderLogin(provider, callbackUrl);
